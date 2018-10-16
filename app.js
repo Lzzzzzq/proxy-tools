@@ -18,6 +18,7 @@ router.get('/', (ctx, next) => {
   ctx.body = 'Hello World!'
 })
 
+app.use(logger())
 app.use(router.routes())
 app.use((ctx, next) => {
   ctx.body = 'hello'
