@@ -6,10 +6,16 @@ const httpsProxy = require('./proxy/https-proxy')
 const config = require('./config/main')
 const registerRouter  = require('./routes')
 const bodyParser = require('koa-bodyparser')
+const path = require('path')
+const static = require('koa-static')
+const staticPath = './view/static'
 
 const app = new Koa()
 
 app.use(logger())
+app.use(static(
+  path.join( __dirname,  staticPath)
+))
 app.use(bodyParser())
 app.use(registerRouter())
 app.use(httpProxy())
