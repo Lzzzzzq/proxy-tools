@@ -47,6 +47,13 @@ module.exports = {
    */
   addIntoGroup: (cont) => {
     fs.writeFileSync(`./data/${config.GROUP}`, JSON.stringify(cont, null, 2))
+  },
+
+  /**
+   * 将某hosts移出某分组
+   */
+  removeFromGroup: (cont) => {
+    fs.writeFileSync(`./data/${config.GROUP}`, JSON.stringify(cont, null, 2))
   }
 
 }

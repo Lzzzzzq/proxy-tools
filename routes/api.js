@@ -96,6 +96,45 @@ router.get('/getAllGroups', async (ctx, next) => {
 })
 
 /**
+ * 新增分组
+ * @param {String} name 分组名称
+ */
+router.post('/addGroup', async (ctx, next) => {
+  try {
+    let {name} = ctx.request.body
+    if (!name) {
+      ctx.status = 400
+      ctx.body = {
+        state: 0,
+        msg: '请输入分组名称'
+      }
+      return
+    }
+    let groups = file.getAllGroups()
+    let groupMd5 = md5(name)
+    if (groups[groupMd5]) {
+      ctx.body = {
+        state: 0,
+        msg: '已添加过该分组'
+      }
+    } else {
+      groups[groupMd5] = {
+        name: name,
+        hosts: []
+      }
+      file.addGroup(groups)
+      ctx.body = {
+        state: 1,
+        msg: '添加成功'
+      }
+    }
+
+  } catch (e) {
+    common.postError(ctx, e, 500)
+  }
+})
+
+/**
  * 添加进分组
  * @param {String} address 网址
  * @param {String} ip ip地址
@@ -149,38 +188,53 @@ router.post('/addIntoGroup', async (ctx, next) => {
   }
 })
 
-
 /**
- * 新增分组
+ * 移出分组
+ * @param {String} address 网址
+ * @param {String} ip ip地址
  * @param {String} name 分组名称
  */
-router.post('/addGroup', async (ctx, next) => {
+router.post('/removeFromGroups', async (ctx, next) => {
   try {
-    let {name} = ctx.request.body
-    if (!name) {
+    let {address, ip, name} = ctx.request.body
+    if (!address || !ip || !name) {
+      let msg = ''
+      if (!address) {
+        msg = '请输入地址'
+      } else if (!ip) {
+        msg = '请输入ip'
+      } else {
+        msg = '请输入分组名称'
+      }
       ctx.status = 400
       ctx.body = {
         state: 0,
-        msg: '请输入分组名称'
+        msg: msg
       }
       return
     }
     let groups = file.getAllGroups()
+    let hostMd5 = md5(address + ip)
     let groupMd5 = md5(name)
     if (groups[groupMd5]) {
-      ctx.body = {
-        state: 0,
-        msg: '已添加过该分组'
+      if (groups[groupMd5].hosts.indexOf(hostMd5) >= 0) {
+        let index = groups[groupMd5].hosts.indexOf(hostMd5)
+        groups[groupMd5].hosts.splice(index, 1)
+        file.removeFromGroup(groups)
+        ctx.body = {
+          state: 1,
+          msg: '已移除该hosts'
+        }
+      } else {
+        ctx.body = {
+          state: 0,
+          msg: '该组内无此hosts'
+        }
       }
     } else {
-      groups[groupMd5] = {
-        name: name,
-        hosts: []
-      }
-      file.addGroup(groups)
       ctx.body = {
-        state: 1,
-        msg: '添加成功'
+        state: 0,
+        msg: '分组不存在'
       }
     }
 
