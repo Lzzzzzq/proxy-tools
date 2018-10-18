@@ -96,6 +96,61 @@ router.get('/getAllGroups', async (ctx, next) => {
 })
 
 /**
+ * 添加进分组
+ * @param {String} address 网址
+ * @param {String} ip ip地址
+ * @param {String} name 分组名称
+ */
+router.post('/addIntoGroup', async (ctx, next) => {
+  try {
+    let {address, ip, name} = ctx.request.body
+    if (!address || !ip || !name) {
+      let msg = ''
+      if (!address) {
+        msg = '请输入地址'
+      } else if (!ip) {
+        msg = '请输入ip'
+      } else {
+        msg = '请输入分组名称'
+      }
+      ctx.status = 400
+      ctx.body = {
+        state: 0,
+        msg: msg
+      }
+      return
+    }
+    let groups = file.getAllGroups()
+    let hostMd5 = md5(address + ip)
+    let groupMd5 = md5(name)
+    if (groups[groupMd5]) {
+      if (groups[groupMd5].hosts.indexOf(hostMd5) >= 0) {
+        ctx.body = {
+          state: 0,
+          msg: '已添加过该host'
+        }
+      } else {
+        groups[groupMd5].hosts.push(hostMd5)
+        file.addIntoGroup(groups)
+        ctx.body = {
+          state: 1,
+          msg: '添加成功'
+        }
+      }
+    } else {
+      ctx.body = {
+        state: 0,
+        msg: '分组不存在'
+      }
+    }
+
+  } catch (e) {
+    common.postError(ctx, e, 500)
+  }
+})
+
+
+/**
  * 新增分组
  * @param {String} name 分组名称
  */
@@ -133,4 +188,5 @@ router.post('/addGroup', async (ctx, next) => {
     common.postError(ctx, e, 500)
   }
 })
+
 module.exports = router

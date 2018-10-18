@@ -35,7 +35,17 @@ module.exports = {
     return groups
   },
 
+  /**
+   * 添加新分组
+   */
   addGroup: (cont) => {
+    fs.writeFileSync(`./data/${config.GROUP}`, JSON.stringify(cont, null, 2))
+  },
+
+  /**
+   * 添加进分组
+   */
+  addIntoGroup: (cont) => {
     fs.writeFileSync(`./data/${config.GROUP}`, JSON.stringify(cont, null, 2))
   }
 
