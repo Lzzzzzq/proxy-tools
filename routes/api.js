@@ -72,4 +72,65 @@ router.post('/addHost', async (ctx, next) => {
   }
 })
 
+/**
+ * 获取全部hosts
+ */
+router.get('/getAllGroups', async (ctx, next) => {
+  try {
+    let groupObj = file.getAllGroups()
+    let groupArr = []
+    for (let item in groupObj) {
+      let groupItem = groupObj[item]
+      groupArr.push({
+        name: groupItem.name,
+        hosts: groupItem.hosts
+      })
+    }
+    ctx.body = {
+      state: 1,
+      data: groupArr
+    }
+  } catch (e) {
+    common.postError(ctx, e, 500)
+  }
+})
+
+/**
+ * 新增分组
+ * @param {String} name 分组名称
+ */
+router.post('/addGroup', async (ctx, next) => {
+  try {
+    let {name} = ctx.request.body
+    if (!name) {
+      ctx.status = 400
+      ctx.body = {
+        state: 0,
+        msg: '请输入分组名称'
+      }
+      return
+    }
+    let groups = file.getAllGroups()
+    let groupMd5 = md5(name)
+    if (groups[groupMd5]) {
+      ctx.body = {
+        state: 0,
+        msg: '已添加过该分组'
+      }
+    } else {
+      groups[groupMd5] = {
+        name: name,
+        hosts: []
+      }
+      file.addGroup(groups)
+      ctx.body = {
+        state: 1,
+        msg: '添加成功'
+      }
+    }
+
+  } catch (e) {
+    common.postError(ctx, e, 500)
+  }
+})
 module.exports = router
