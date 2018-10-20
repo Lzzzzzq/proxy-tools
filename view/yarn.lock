@@ -300,6 +300,12 @@ async-limiter@~1.0.0:
   version "1.0.0"
   resolved "http://registry.npm.taobao.org/async-limiter/download/async-limiter-1.0.0.tgz#78faed8c3d074ab81f22b4e985d79e8738f720f8"
 
+async-validator@^1.8.2:
+  version "1.10.0"
+  resolved "http://registry.npm.taobao.org/async-validator/download/async-validator-1.10.0.tgz#59a392a1b48565c2eb43faddb4e54d7d86dce293"
+  dependencies:
+    babel-runtime "6.x"
+
 async@^1.5.2:
   version "1.5.2"
   resolved "http://registry.npm.taobao.org/async/download/async-1.5.2.tgz#ec6a61ae56480c0c3cb241c95618e20892f9672a"
@@ -891,7 +897,7 @@ babel-register@^6.26.0:
     mkdirp "^0.5.1"
     source-map-support "^0.4.15"
 
-babel-runtime@^6.18.0, babel-runtime@^6.22.0, babel-runtime@^6.26.0:
+babel-runtime@6.x, babel-runtime@^6.18.0, babel-runtime@^6.22.0, babel-runtime@^6.26.0:
   version "6.26.0"
   resolved "http://registry.npm.taobao.org/babel-runtime/download/babel-runtime-6.26.0.tgz#965c7058668e82b55d7bfe04ff2337bc8b5647fe"
   dependencies:
@@ -962,6 +968,10 @@ base@^0.11.1:
     isobject "^3.0.1"
     mixin-deep "^1.2.0"
     pascalcase "^0.1.1"
+
+batch-processor@^1.0.0:
+  version "1.0.0"
+  resolved "http://registry.npm.taobao.org/batch-processor/download/batch-processor-1.0.0.tgz#75c95c32b748e0850d10c2b168f6bdbe9891ace8"
 
 batch@0.6.1:
   version "0.6.1"
@@ -1831,6 +1841,10 @@ deep-is@~0.1.3:
   version "0.1.3"
   resolved "http://registry.npm.taobao.org/deep-is/download/deep-is-0.1.3.tgz#b369d6fb5dbc13eecf524f91b070feedc357cf34"
 
+deepmerge@^2.1.0:
+  version "2.2.1"
+  resolved "http://registry.npm.taobao.org/deepmerge/download/deepmerge-2.2.1.tgz#5d3ff22a01c00f645405a2fbc17d0778a1801170"
+
 define-properties@^1.1.2:
   version "1.1.3"
   resolved "http://registry.npm.taobao.org/define-properties/download/define-properties-1.1.3.tgz#cf88da6cbee26fe6db7094f61d870cbd84cee9f1"
@@ -2040,6 +2054,12 @@ ejs@^2.5.7:
 electron-to-chromium@^1.2.7, electron-to-chromium@^1.3.30, electron-to-chromium@^1.3.47:
   version "1.3.80"
   resolved "http://registry.npm.taobao.org/electron-to-chromium/download/electron-to-chromium-1.3.80.tgz#e99ec7efe64c2c6a269d3885ff411ea88852fa53"
+
+element-resize-detector@^1.1.14:
+  version "1.1.14"
+  resolved "http://registry.npm.taobao.org/element-resize-detector/download/element-resize-detector-1.1.14.tgz#af064a0a618a820ad570a95c5eec5b77be0128c1"
+  dependencies:
+    batch-processor "^1.0.0"
 
 elliptic@^6.0.0:
   version "6.4.1"
@@ -3495,9 +3515,26 @@ isstream@~0.1.2:
   version "0.1.2"
   resolved "http://registry.npm.taobao.org/isstream/download/isstream-0.1.2.tgz#47e63f7af55afa6f92e1500e690eb8b8529c099a"
 
+iview@^3.1.3:
+  version "3.1.3"
+  resolved "http://registry.npm.taobao.org/iview/download/iview-3.1.3.tgz#c99ca1d5dad48fb4df17d75b95554d16bd05ab77"
+  dependencies:
+    async-validator "^1.8.2"
+    deepmerge "^2.1.0"
+    element-resize-detector "^1.1.14"
+    js-calendar "^1.2.3"
+    lodash.throttle "^4.1.1"
+    popper.js "^1.14.1"
+    tinycolor2 "^1.4.1"
+    v-click-outside-x "^3.0.0"
+
 js-base64@^2.1.9:
   version "2.4.9"
   resolved "http://registry.npm.taobao.org/js-base64/download/js-base64-2.4.9.tgz#748911fb04f48a60c4771b375cac45a80df11c03"
+
+js-calendar@^1.2.3:
+  version "1.2.3"
+  resolved "http://registry.npm.taobao.org/js-calendar/download/js-calendar-1.2.3.tgz#a583b0644b4e695ba394f344d103dbcc7a7a7d3e"
 
 js-tokens@^3.0.0, js-tokens@^3.0.2:
   version "3.0.2"
@@ -3718,6 +3755,10 @@ lodash.debounce@^4.0.8:
 lodash.memoize@^4.1.2:
   version "4.1.2"
   resolved "http://registry.npm.taobao.org/lodash.memoize/download/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
+
+lodash.throttle@^4.1.1:
+  version "4.1.1"
+  resolved "http://registry.npm.taobao.org/lodash.throttle/download/lodash.throttle-4.1.1.tgz#c23e91b710242ac70c37f1e1cda9274cc39bf2f4"
 
 lodash.uniq@^4.5.0:
   version "4.5.0"
@@ -4520,6 +4561,10 @@ pkg-dir@^2.0.0:
 pluralize@^7.0.0:
   version "7.0.0"
   resolved "http://registry.npm.taobao.org/pluralize/download/pluralize-7.0.0.tgz#298b89df8b93b0221dbf421ad2b1b1ea23fc6777"
+
+popper.js@^1.14.1:
+  version "1.14.4"
+  resolved "http://registry.npm.taobao.org/popper.js/download/popper.js-1.14.4.tgz#8eec1d8ff02a5a3a152dd43414a15c7b79fd69b6"
 
 portfinder@^1.0.13, portfinder@^1.0.9:
   version "1.0.18"
@@ -5848,6 +5893,10 @@ timers-browserify@^2.0.4:
   dependencies:
     setimmediate "^1.0.4"
 
+tinycolor2@^1.4.1:
+  version "1.4.1"
+  resolved "http://registry.npm.taobao.org/tinycolor2/download/tinycolor2-1.4.1.tgz#f4fad333447bc0b07d4dc8e9209d8f39a8ac77e8"
+
 tmp@^0.0.33:
   version "0.0.33"
   resolved "http://registry.npm.taobao.org/tmp/download/tmp-0.0.33.tgz#6d34335889768d21b2bcda0aa277ced3b1bfadf9"
@@ -6100,6 +6149,10 @@ utils-merge@1.0.1:
 uuid@^3.0.1, uuid@^3.3.2:
   version "3.3.2"
   resolved "http://registry.npm.taobao.org/uuid/download/uuid-3.3.2.tgz#1b4af4955eb3077c501c23872fc6513811587131"
+
+v-click-outside-x@^3.0.0:
+  version "3.4.0"
+  resolved "http://registry.npm.taobao.org/v-click-outside-x/download/v-click-outside-x-3.4.0.tgz#34f331be123299d0127463dc66666b89ee020fbb"
 
 validate-npm-package-license@^3.0.1:
   version "3.0.4"
