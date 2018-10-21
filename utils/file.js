@@ -40,7 +40,7 @@ getAllHostsList = () => {
  * 获取页面
  */
 getView = () => {
-  return fs.readFileSync(`./view/${config.VIEW}`)
+  return fs.readFileSync(`./view/dist/${config.VIEW}`)
 },
 
 /**

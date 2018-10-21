@@ -9,11 +9,12 @@
       loading
       ok-text="添加"
       :closable="false"
+      :mask-closable="false"
       @on-ok="handleClickAdd"
       @on-cancel="handleClickCancel"
     >
-      <Input v-model="address" placeholder="请输入地址" style="padding: 10px 0" />
-      <Input v-model="ip" placeholder="请输入ip" style="padding: 10px 0"  />
+      <AutoComplete v-model="address" placeholder="请输入地址" style="margin: 10px 0" :data="autoAddress"></AutoComplete>
+      <AutoComplete v-model="ip" placeholder="请输入ip" style="margin: 10px 0" :data="autoIp"></AutoComplete>
       <div slot="footer">
           <Button type="text" @click="handleClickCancel">取消</Button>
           <Button type="primary" @click="handleClickAdd" :disabled="!address || !ip">添加</Button>
@@ -29,7 +30,6 @@ export default {
   name: 'ChangeHosts',
   mounted: function () {
     this.getAllHosts()
-    console.log(this.$refs.contWrap.clientHeight)
   },
   data () {
     return {
@@ -37,6 +37,8 @@ export default {
       ip: '',
       addLoading: false,
       modal: false,
+      autoAddress: [],
+      autoIp: [],
       columns: [
         {
           title: 'State',
@@ -59,11 +61,21 @@ export default {
         },
         {
           title: 'Address',
-          key: 'address'
+          key: 'address',
+          filters: [],
+          filterMultiple: false,
+          filterMethod (value, row) {
+            return row.address === value
+          }
         },
         {
           title: 'Ip',
-          key: 'ip'
+          key: 'ip',
+          filters: [],
+          filterMultiple: false,
+          filterMethod (value, row) {
+            return row.ip === value
+          }
         }, {
           title: 'Operation',
           render: (h, params) => {
@@ -93,18 +105,43 @@ export default {
       try {
         let { data } = await actions.getAllHosts()
         if (data.state === 1) {
-          // this.data = data.data
-          this.data = data.data.concat(data.data)
+          this.data = data.data
+          this.updateFilter()
         } else {
           this.$Modal.error({
             title: '错误',
             content: data.msg
           })
         }
-        console.log(data)
       } catch (e) {
         console.error(e)
       }
+    },
+
+    /**
+     * 生成渲染器
+     */
+    updateFilter: function () {
+      let addressList = []
+      let ipList = []
+      this.data.map(item => {
+        addressList.push(item.address)
+        ipList.push(item.ip)
+      })
+      addressList = [...new Set(addressList)]
+      let addressListObj = addressList.map((item, index) => ({
+        label: item,
+        value: item
+      }))
+      ipList = [...new Set(ipList)]
+      let ipListObj = ipList.map((item, index) => ({
+        label: item,
+        value: item
+      }))
+      this.columns[1].filters = addressListObj
+      this.autoAddress = addressList
+      this.columns[2].filters = ipListObj
+      this.autoIp = ipList
     },
 
     /**
@@ -122,7 +159,6 @@ export default {
             content: data.msg
           })
         }
-        console.log(data)
       } catch (e) {
         console.error(e)
       }
