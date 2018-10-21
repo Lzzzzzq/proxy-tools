@@ -12,19 +12,9 @@ router.prefix('/api')
  */
 router.get('/getAllHosts', async (ctx, next) => {
   try {
-    let hostsObj = file.getAllHosts()
-    let hostsArr = []
-    for (let item in hostsObj) {
-      let hostItem = hostsObj[item]
-      hostsArr.push({
-        address: hostItem.address,
-        ip: hostItem.ip,
-        active: hostItem.active
-      })
-    }
     ctx.body = {
       state: 1,
-      data: hostsArr
+      data: file.getAllHostsList()
     }
   } catch (e) {
     common.postError(ctx, e, 500)
@@ -32,7 +22,7 @@ router.get('/getAllHosts', async (ctx, next) => {
 })
 
 /**
- * 新增hosts
+ * 新增host
  * @param {String} address 网址
  * @param {String} ip ip地址
  */
@@ -60,10 +50,48 @@ router.post('/addHost', async (ctx, next) => {
         ip: ip,
         active: false
       }
-      file.addHost(hosts)
+      file.updateHosts(hosts)
       ctx.body = {
         state: 1,
-        msg: '添加成功'
+        msg: '添加成功',
+        data: file.getAllHostsList()
+      }
+    }
+
+  } catch (e) {
+    common.postError(ctx, e, 500)
+  }
+})
+/**
+ * 删除host
+ * @param {String} address 网址
+ * @param {String} ip ip地址
+ */
+router.post('/deleteHost', async (ctx, next) => {
+  try {
+    let {address, ip} = ctx.request.body
+    if (!address || !ip) {
+      ctx.status = 400
+      ctx.body = {
+        state: 0,
+        msg: !address ? '请输入地址' : '请输入ip'
+      }
+      return
+    }
+    let hosts = file.getAllHosts()
+    let hostMd5 = md5(address + ip)
+    if (hosts[hostMd5]) {
+      delete hosts[hostMd5]
+      file.updateHosts(hosts)
+      ctx.body = {
+        state: 1,
+        msg: '删除成功',
+        data: file.getAllHostsList()
+      }
+    } else {
+      ctx.body = {
+        state: 0,
+        msg: '该hosts不存在'
       }
     }
 
@@ -122,7 +150,7 @@ router.post('/addGroup', async (ctx, next) => {
         name: name,
         hosts: []
       }
-      file.addGroup(groups)
+      file.updateGroup(groups)
       ctx.body = {
         state: 1,
         msg: '添加成功'
@@ -170,7 +198,7 @@ router.post('/addIntoGroup', async (ctx, next) => {
         }
       } else {
         groups[groupMd5].hosts.push(hostMd5)
-        file.addIntoGroup(groups)
+        file.updateGroup(groups)
         ctx.body = {
           state: 1,
           msg: '添加成功'
@@ -220,7 +248,7 @@ router.post('/removeFromGroups', async (ctx, next) => {
       if (groups[groupMd5].hosts.indexOf(hostMd5) >= 0) {
         let index = groups[groupMd5].hosts.indexOf(hostMd5)
         groups[groupMd5].hosts.splice(index, 1)
-        file.removeFromGroup(groups)
+        file.updateGroup(groups)
         ctx.body = {
           state: 1,
           msg: '已移除该hosts'
@@ -243,4 +271,47 @@ router.post('/removeFromGroups', async (ctx, next) => {
   }
 })
 
+/**
+ * 切换单条状态
+ * @param {String} address 网址
+ * @param {String} ip ip地址
+ */
+router.post('/changeState', async (ctx, next) => {
+  try {
+    let {address, ip} = ctx.request.body
+    if (!address || !ip) {
+      let msg = ''
+      if (!address) {
+        msg = '请输入地址'
+      } else if (!ip) {
+        msg = '请输入ip'
+      }
+      ctx.status = 400
+      ctx.body = {
+        state: 0,
+        msg: msg
+      }
+      return
+    }
+    let hosts = file.getAllHosts()
+    let hostMd5 = md5(address + ip)
+
+    if (hosts[hostMd5]) {
+      hosts[hostMd5].active = !hosts[hostMd5].active
+      file.updateHosts(hosts)
+      ctx.body = {
+        state: 1,
+        msg: '修改成功'
+      }
+    } else {
+      ctx.body = {
+        state: 0,
+        msg: '无此hosts'
+      }
+    }
+
+  } catch (e) {
+    common.postError(ctx, e, 500)
+  }
+})
 module.exports = router

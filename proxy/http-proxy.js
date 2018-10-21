@@ -1,6 +1,8 @@
 const proxy = require('http-proxy-middleware')
 const fs = require('fs')
 const config = require('../config/main')
+const md5 = require('md5')
+const file = require('../utils/file')
 
 const dev = () => {
 
@@ -9,11 +11,18 @@ const dev = () => {
       let host = ctx.request.header.host
       let url = ctx.request.url
       let protocol = ctx.request.protocol
-      let hostsFile = fs.readFileSync(`./config/${config.ACTIVE}`)
-      let hosts = JSON.parse(hostsFile.toString())
 
-      if (hosts && hosts[host]) {
-        host = hosts[host]
+      let hosts = file.getAllHosts()
+      
+      let ip
+      for (let item in hosts) {
+        if (hosts[item].address === host && hosts[item].active) {
+          ip = hosts[item].ip
+        }
+      }
+
+      if (ip) {
+        host = ip
         ctx.respond = false
         return proxy({
             target: protocol + '://' + host

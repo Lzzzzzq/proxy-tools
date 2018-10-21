@@ -7,15 +7,18 @@ const config = require('./config/main')
 const registerRouter  = require('./routes')
 const bodyParser = require('koa-bodyparser')
 const path = require('path')
-const static = require('koa-static')
+// const static = require('koa-static')
+const cors = require('koa-cors')
+
 const staticPath = './view/static'
 
 const app = new Koa()
 
+app.use(cors())
 app.use(logger())
-app.use(static(
-  path.join( __dirname,  staticPath)
-))
+// app.use(static(
+//   path.join( __dirname,  staticPath)
+// ))
 app.use(bodyParser())
 app.use(registerRouter())
 app.use(httpProxy())
@@ -23,3 +26,8 @@ app.use(httpProxy())
 const server = http.createServer(app.callback()).listen(config.PORT, config.HOST)
 
 server.on('connect', httpsProxy)
+
+process.on("uncaughtException", function(err) {
+  console.error('An uncaught error occurred!');
+  console.error(err.stack);
+})

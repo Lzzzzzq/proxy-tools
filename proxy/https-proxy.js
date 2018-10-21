@@ -2,17 +2,24 @@ const url = require('url')
 const net = require('net')
 const fs = require('fs')
 const config = require('../config/main')
+const file = require('../utils/file')
 
 const dev = (req, cltSocket, head) => {
   try {
     let srvUrl = url.parse(`http://${req.url}`);
     let host = srvUrl.hostname
 
-    let hostsFile = fs.readFileSync(`./config/${config.ACTIVE}`)
-    let hosts = JSON.parse(hostsFile.toString())
+    let hosts = file.getAllHosts()
+      
+    let ip
+    for (let item in hosts) {
+      if (hosts[item].address === host && hosts[item].active) {
+        ip = hosts[item].ip
+      }
+    }
 
-    if(hosts && hosts[host]) {
-      host = hosts[host]
+    if(ip) {
+      host = ip
     }
 
     let srvSocket = net.connect(srvUrl.port, host, () => {

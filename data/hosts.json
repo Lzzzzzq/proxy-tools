@@ -4,11 +4,6 @@
     "ip": "172.20.230.86",
     "active": false
   },
-  "340856fc5fc80c3315b61705334f4203": {
-    "address": "data.hexin.cn",
-    "ip": "172.20.230.86",
-    "active": false
-  },
   "480b630a162dafef8d3366b34dd1ca51": {
     "address": "media.10jqka.com.cn",
     "ip": "172.20.230.86",
@@ -22,6 +17,26 @@
   "8fa5b73ef1193101ae276de18e255d5f": {
     "address": "basic.10jqka.com.cn",
     "ip": "172.20.230.86",
+    "active": false
+  },
+  "8c0f2ffa49655b81045a23952a6aecdf": {
+    "address": "news.10jqka.com.cn",
+    "ip": "172.19.80.193",
+    "active": false
+  },
+  "eebe7cda57fb6f8603bab1758aa3f02e": {
+    "address": "basic.10jqka.com.cn",
+    "ip": "172.19.80.193",
+    "active": false
+  },
+  "41f3267918ef98cb754d82419bb52f69": {
+    "address": "media.10jqka.com.cn",
+    "ip": "172.19.80.193",
+    "active": false
+  },
+  "60dbb8990841b638eaf4abb11823abfb": {
+    "address": "data.hexin.cn",
+    "ip": "172.19.80.193",
     "active": false
   }
 }
