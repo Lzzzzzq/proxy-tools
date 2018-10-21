@@ -9,6 +9,7 @@ const bodyParser = require('koa-bodyparser')
 const path = require('path')
 const static = require('koa-static')
 const cors = require('koa-cors')
+const opn = require('opn')
 
 const staticPath = './view/dist/'
 
@@ -31,3 +32,8 @@ process.on("uncaughtException", function(err) {
   console.error('An uncaught error occurred!');
   console.error(err.stack);
 })
+
+opn('http://localhost:3000/view')
+  .catch(e => {
+    console.log(e)
+  })
