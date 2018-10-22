@@ -180,6 +180,7 @@ export default {
           })
           this.handleClickCancel()
           this.data = data.data
+          this.updateFilter()
         } else {
           this.$Modal.error({
             title: '错误',
@@ -219,6 +220,7 @@ export default {
                 content: '删除成功'
               })
               this.data = data.data
+              this.updateFilter()
             } else {
               this.$Modal.error({
                 title: '错误',

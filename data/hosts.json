@@ -1,3 +1,12 @@
 {
-  
+  "d7277745b69449f5a613f95b90f6d5ce": {
+    "address": "news.10jqka.com.cn",
+    "ip": "172.20.230.86",
+    "active": false
+  },
+  "340856fc5fc80c3315b61705334f4203": {
+    "address": "data.hexin.cn",
+    "ip": "172.20.230.86",
+    "active": false
+  }
 }
