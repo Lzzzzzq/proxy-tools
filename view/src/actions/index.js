@@ -13,8 +13,7 @@ export const getAllHosts = () => {
  */
 export const changeState = (payload) => {
   return axios.post('//localhost:3000/api/changeState', {
-    address: payload.address,
-    ip: payload.ip
+    id: payload.id
   })
 }
 
@@ -35,6 +34,17 @@ export const addHost = (payload) => {
  */
 export const deleteHost = (payload) => {
   return axios.post('//localhost:3000/api/deleteHost', {
+    id: payload.id
+  })
+}
+
+/**
+ * 删除host
+ * @param {Object} payload 地址及ip
+ */
+export const editHost = (payload) => {
+  return axios.post('//localhost:3000/api/editHost', {
+    id: payload.id,
     address: payload.address,
     ip: payload.ip
   })

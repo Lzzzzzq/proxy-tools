@@ -1,25 +1,60 @@
 <template>
-  <div ref="contWrap">
-    <Button type="primary" @click="modal = true">新增host</Button>
-    <Divider></Divider>
-    <Table stripe :columns="columns" :data="data" ref="table"></Table>
-    <Modal
-      title="添加Host"
-      v-model="modal"
-      loading
-      ok-text="添加"
-      :closable="false"
-      :mask-closable="false"
-      @on-ok="handleClickAdd"
-      @on-cancel="handleClickCancel"
-    >
-      <AutoComplete v-model="address" placeholder="请输入地址" style="margin: 10px 0" :data="autoAddress"></AutoComplete>
-      <AutoComplete v-model="ip" placeholder="请输入ip" style="margin: 10px 0" :data="autoIp"></AutoComplete>
-      <div slot="footer">
-          <Button type="text" @click="handleClickCancel">取消</Button>
-          <Button type="primary" @click="handleClickAdd" :disabled="!address || !ip">添加</Button>
-        </div>
-    </Modal>
+  <div class="hostsWrap" ref="contWrap">
+    <el-button type="primary" @click="addModal = true" size="small">新增host</el-button>
+    <div class="hostsDivider"></div>
+    <el-table :data="data" style="width: 100%" border>
+      <el-table-column prop="active" label="State" width="150">
+        <template slot-scope="scope">
+          <el-switch v-model="scope.row.active" @change="handleChangeState(scope.row)"></el-switch>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="address"
+        label="Address"
+        :filters="autoAddress"
+        :filter-method="addressFilterHandler"
+        filter-placement="bottom"
+        :filter-multiple="false"
+      >
+      </el-table-column>
+      <el-table-column
+        prop="ip"
+        label="Ip"
+        :filters="autoIp"
+        :filter-method="ipFilterHandler"
+        filter-placement="bottom"
+        :filter-multiple="false"
+      >
+      </el-table-column>
+      <el-table-column label="Operation">
+        <template slot-scope="scope">
+          <el-button type="warning" @click="handleClickEdit(scope.row)" size="small">
+            编辑
+          </el-button>
+          <el-button type="danger" @click="handleClickDelete(scope.row)" size="small">
+            删除
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <el-dialog title="新增host" :visible.sync="addModal">
+      <el-input v-model="address" style="margin: 10px 0"></el-input>
+      <el-input v-model="ip" style="margin: 10px 0">></el-input>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="addModal = false">取 消</el-button>
+        <el-button type="primary" @click="handleSubmitAdd">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog title="编辑host" :visible.sync="editModal">
+      <el-input v-model="address" style="margin: 10px 0"></el-input>
+      <el-input v-model="ip" style="margin: 10px 0">></el-input>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editModal = false">取 消</el-button>
+        <el-button type="primary" @click="handleSubmitEdit">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -33,67 +68,16 @@ export default {
   },
   data () {
     return {
+      addModal: false,
+      editModal: false,
+
       address: '',
       ip: '',
+      id: '',
       addLoading: false,
       modal: false,
       autoAddress: [],
       autoIp: [],
-      columns: [
-        {
-          title: 'State',
-          key: 'active',
-          width: 150,
-          render: (h, params) => {
-            return h('div', [
-              h('i-switch', {
-                props: {
-                  value: params.row.active
-                },
-                nativeOn: {
-                  click: () => {
-                    this.handleChangeState(params.row)
-                  }
-                }
-              })
-            ])
-          }
-        },
-        {
-          title: 'Address',
-          key: 'address',
-          filters: [],
-          filterMultiple: false,
-          filterMethod (value, row) {
-            return row.address === value
-          }
-        },
-        {
-          title: 'Ip',
-          key: 'ip',
-          filters: [],
-          filterMultiple: false,
-          filterMethod (value, row) {
-            return row.ip === value
-          }
-        }, {
-          title: 'Operation',
-          render: (h, params) => {
-            return h('div', [
-              h('Button', {
-                props: {
-                  type: 'error'
-                },
-                on: {
-                  click: () => {
-                    this.handleDelete(params.row)
-                  }
-                }
-              }, '删除')
-            ])
-          }
-        }
-      ],
       data: []
     }
   },
@@ -108,9 +92,9 @@ export default {
           this.data = data.data
           this.updateFilter()
         } else {
-          this.$Modal.error({
-            title: '错误',
-            content: data.msg
+          this.$message({
+            type: 'error',
+            message: data.msg
           })
         }
       } catch (e) {
@@ -129,19 +113,15 @@ export default {
         ipList.push(item.ip)
       })
       addressList = [...new Set(addressList)]
-      let addressListObj = addressList.map((item, index) => ({
-        label: item,
-        value: item
-      }))
       ipList = [...new Set(ipList)]
-      let ipListObj = ipList.map((item, index) => ({
-        label: item,
+      this.autoAddress = addressList.map(item => ({
+        text: item,
         value: item
       }))
-      this.columns[1].filters = addressListObj
-      this.autoAddress = addressList
-      this.columns[2].filters = ipListObj
-      this.autoIp = ipList
+      this.autoIp = ipList.map(item => ({
+        text: item,
+        value: item
+      }))
     },
 
     /**
@@ -150,13 +130,12 @@ export default {
     handleChangeState: async function (item) {
       try {
         let { data } = await actions.changeState({
-          address: item.address,
-          ip: item.ip
+          id: item.id
         })
         if (data.state !== 1) {
-          this.$Modal.error({
-            title: '错误',
-            content: data.msg
+          this.$message({
+            type: 'error',
+            message: data.msg
           })
         }
       } catch (e) {
@@ -167,7 +146,7 @@ export default {
     /**
      * 点击了添加
      */
-    handleClickAdd: async function () {
+    handleSubmitAdd: async function () {
       try {
         let {address, ip} = this
         let {data} = await actions.addHost({
@@ -175,16 +154,17 @@ export default {
           ip
         })
         if (data.state === 1) {
-          this.$Message.success({
-            content: '添加成功'
+          this.$message({
+            type: 'success',
+            message: '添加成功'
           })
-          this.handleClickCancel()
+          this.addModal = false
           this.data = data.data
           this.updateFilter()
         } else {
-          this.$Modal.error({
-            title: '错误',
-            content: data.msg
+          this.$message({
+            type: 'error',
+            message: data.msg
           })
         }
       } catch (e) {
@@ -193,49 +173,111 @@ export default {
     },
 
     /**
-     * 点击了关闭
-     */
-    handleClickCancel: function () {
-      this.address = ''
-      this.ip = ''
-      this.modal = false
-    },
-
-    /**
      * 点击了删除
      */
-    handleDelete: async function (item) {
+    handleClickDelete: async function (item) {
       try {
-        this.$Modal.confirm({
-          title: '提示',
-          content: '确认要删除该条host吗',
-          onOk: async () => {
-            let {address, ip} = item
-            let {data} = await actions.deleteHost({
-              address,
-              ip
+        this.$confirm('确认要删除该条host吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async () => {
+          let {id} = item
+          let {data} = await actions.deleteHost({
+            id
+          })
+          if (data.state === 1) {
+            this.$message({
+              type: 'success',
+              message: '删除成功'
             })
-            if (data.state === 1) {
-              this.$Message.success({
-                content: '删除成功'
-              })
-              this.data = data.data
-              this.updateFilter()
-            } else {
-              this.$Modal.error({
-                title: '错误',
-                content: data.msg
-              })
-            }
+            this.data = data.data
+            this.updateFilter()
+          } else {
+            this.$message({
+              type: 'error',
+              message: '错误'
+            })
           }
+        }).catch(() => {
         })
       } catch (e) {
         console.error(e)
       }
+    },
+
+    /**
+     * 点击了编辑
+     */
+    handleClickEdit: async function (item) {
+      this.address = item.address
+      this.ip = item.ip
+      this.id = item.id
+      this.editModal = true
+    },
+
+    /**
+     * 确认编辑
+     */
+    handleSubmitEdit: async function () {
+      try {
+        let {address, ip, id} = this
+        let {data} = await actions.editHost({
+          address,
+          ip,
+          id
+        })
+        if (data.state === 1) {
+          this.$message({
+            type: 'success',
+            message: '修改成功'
+          })
+          this.editModal = false
+          this.data = data.data
+          this.updateFilter()
+        } else {
+          this.$message({
+            type: 'error',
+            message: data.msg
+          })
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    },
+
+    /**
+     * address 筛选
+     */
+    addressFilterHandler: function (value, row, column) {
+      return row.address === value
+    },
+
+    /**
+     * ip 筛选
+     */
+    ipFilterHandler: function (value, row, column) {
+      return row.ip === value
     }
   }
 }
 </script>
 
-<style>
+<style scoped>
+.hostsWrap {
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow: auto;
+}
+.hostsDivider {
+  display: block;
+  height: 1px;
+  width: 100%;
+  margin: 24px 0;
+  clear: both;
+  background-color: #e8eaec;
+}
 </style>

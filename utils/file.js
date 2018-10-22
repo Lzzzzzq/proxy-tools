@@ -2,35 +2,32 @@ const fs = require('fs')
 const config = require('../config/main')
 
 /**
- * 获取所有hosts的json
+ * 获取hosts文件
  */
-getAllHosts = () => {
-  let hostsFile = fs.readFileSync(`./data/${config.ALL}`)
-  let hosts = JSON.parse(hostsFile.toString())
-  return hosts
+getHosts = () => {
+  return getFileAsJson(config.HOSTS)
 },
 
 /**
  * 获取所有分组
  */
 getAllGroups = () => {
-  let groupsFile = fs.readFileSync(`./data/${config.GROUP}`)
-  let groups = JSON.parse(groupsFile.toString())
-  return groups
+  return getFileAsJson(config.GROUP)
 },
 
 /**
  * 获取所有hosts的数组
  */
 getAllHostsList = () => {
-  let hosts = getAllHosts()
+  let hosts = getHosts()
   let hostsArr = []
   for (let item in hosts) {
     let hostItem = hosts[item]
     hostsArr.push({
       address: hostItem.address,
       ip: hostItem.ip,
-      active: hostItem.active
+      active: hostItem.active,
+      id: item
     })
   }
   return hostsArr
@@ -47,18 +44,33 @@ getView = () => {
  * 更新hosts
  */
 updateHosts = (cont) => {
-  fs.writeFileSync(`./data/${config.ALL}`, JSON.stringify(cont, null, 2))
+  updateFileAsJson(config.HOSTS, cont)
 },
 
 /**
  * 更新分组数据
  */
 updateGroup = (cont) => {
-  fs.writeFileSync(`./data/${config.GROUP}`, JSON.stringify(cont, null, 2))
+  updateFileAsJson(config.GROUP, cont)
+}
+
+/**
+ * 更新文件
+ */
+updateFileAsJson = (path, cont) => {
+  fs.writeFileSync(`./data/${path}`, JSON.stringify(cont, null, 2))
+}
+
+/**
+ * 获取json文件
+ */
+getFileAsJson = (path) => {
+  let fileCont = fs.readFileSync(`./data/${path}`)
+  return JSON.parse(fileCont.toString())
 }
 
 module.exports = {
-  getAllHosts,
+  getHosts,
   getAllHostsList,
   getAllGroups,
   getView,
