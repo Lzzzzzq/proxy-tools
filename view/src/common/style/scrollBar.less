@@ -1,0 +1,24 @@
+@scrollBarWidth: 8px;
+
+::-webkit-scrollbar-track-piece{
+  width: @scrollBarWidth;
+  background-color: rgba(0, 0, 0, 0.1);  
+}
+
+::-webkit-scrollbar{
+  width: @scrollBarWidth;
+  height: 6px; 
+}
+
+::-webkit-scrollbar-thumb{
+  height: 50px;
+  background-color: rgba(0, 0, 0, 0.15);  
+  border-radius: @scrollBarWidth / 2;
+  cursor: pointer;
+}
+
+::-webkit-scrollbar-thumb:hover{
+  background-color: rgba(0, 0, 0, 0.3); 
+  cursor: pointer;
+}
+

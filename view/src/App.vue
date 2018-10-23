@@ -48,3 +48,6 @@ body {
   background-color: #f5f7f9;
 }
 </style>
+<style lang="less">
+@import './common/style/scrollBar.less';
+</style>

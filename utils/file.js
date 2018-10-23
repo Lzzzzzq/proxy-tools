@@ -9,6 +9,19 @@ getHosts = () => {
 }
 
 /**
+ * 获取address及ip对应的对象
+ */
+getHostsSymbolList = () => {
+  let hosts = getFileAsJson(config.HOSTS)
+  let symbolList = {}
+  for (let key in hosts) {
+    let item = hosts[key]
+    symbolList[`${item.address}${item.ip}`] = 1
+  }
+  return symbolList
+}
+
+/**
  * 获取所有分组
  */
 getAllGroups = () => {
@@ -92,6 +105,7 @@ createFile = (filePath, fileData) => {
 
 module.exports = {
   getHosts,
+  getHostsSymbolList,
   getAllHostsList,
   getAllGroups,
   getView,

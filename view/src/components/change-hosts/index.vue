@@ -1,8 +1,11 @@
 <template>
   <div class="hostsWrap" ref="contWrap">
-    <el-button type="primary" @click="handleClickAdd" size="small">新增host</el-button>
-    <div class="hostsDivider"></div>
-    <el-table :data="data" style="width: 100%" border>
+    <div ref="hostsTop" style="overflow: hidden">
+      <el-button type="primary" @click="handleClickAdd" size="small">新增host</el-button>
+      <el-button type="info" @click="handleClickAddHostsFile" size="small">导入本地hosts文件</el-button>
+      <div class="hostsDivider"></div>
+    </div>
+    <el-table :data="data" style="width: 100%" border stripe>
       <el-table-column prop="active" label="State" width="150">
         <template slot-scope="scope">
           <el-switch v-model="scope.row.active" @change="handleChangeState(scope.row)"></el-switch>
@@ -55,8 +58,6 @@
         style="margin: 10px 0; width: 100%"
         clearable
       ></el-autocomplete>
-      <!-- <el-input v-model="address" style="margin: 10px 0"></el-input>
-      <el-input v-model="ip" style="margin: 10px 0">></el-input> -->
       <div slot="footer" class="dialog-footer">
         <el-button @click="addModal = false" size="small">取 消</el-button>
         <el-button type="primary" @click="handleSubmitAdd" size="small" :disabled="!address || !ip">确 定</el-button>
@@ -64,11 +65,25 @@
     </el-dialog>
 
     <el-dialog title="编辑host" :visible.sync="editModal" width="550px">
-      <el-input v-model="address" style="margin: 10px 0"></el-input>
-      <el-input v-model="ip" style="margin: 10px 0">></el-input>
+      <el-input v-model="address" style="margin: 10px 0" placeholder="请输入地址"></el-input>
+      <el-input v-model="ip" style="margin: 10px 0" placeholder="请输入ip"></el-input>
       <div slot="footer" class="dialog-footer">
         <el-button @click="editModal = false" size="small">取 消</el-button>
         <el-button type="primary" @click="handleSubmitEdit" size="small">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog title="导入hosts文件" :visible.sync="addHostsFileModal" width="550px">
+      <el-alert
+        title="已添加过的hosts将不会被导入"
+        type="warning"
+        :closable="false"
+        show-icon>
+      </el-alert>
+      <el-input type="textarea" rows="12" placeholder="请将本地hosts文件内容贴入" spell-check="false" resize="none" v-model="hostsFile" style="margin: 10px 0"></el-input>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="addHostsFileModal = false" size="small">取 消</el-button>
+        <el-button type="primary" @click="handleSubmitHostsFile" size="small" :disabled="!hostsFile">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -86,9 +101,11 @@ export default {
     return {
       addModal: false,
       editModal: false,
+      addHostsFileModal: false,
 
       address: '',
       ip: '',
+      hostsFile: '',
       id: '',
       addLoading: false,
       modal: false,
@@ -119,7 +136,7 @@ export default {
     },
 
     /**
-     * 生成渲染器
+     * 生成过滤器
      */
     updateFilter: function () {
       let addressList = []
@@ -155,7 +172,7 @@ export default {
           })
         } else {
           this.$message({
-            type: 'success',
+            type: item.active ? 'success' : 'warning',
             message: item.active ? '已开启' : '已关闭'
           })
         }
@@ -308,14 +325,62 @@ export default {
       cb(results)
     },
 
+    /**
+     * 输入建议过滤
+     */
     createFilter (queryString) {
       return (res) => {
         return (res.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0)
       }
+    },
+
+    /**
+     * 点击了导入hosts文件按钮
+     */
+    handleClickAddHostsFile: function () {
+      this.hostsFile = ''
+      this.addHostsFileModal = true
+    },
+
+    /**
+     * 提交hosts文件
+     */
+    handleSubmitHostsFile: async function () {
+      try {
+        let {hostsFile} = this
+        if (!hostsFile) return
+        let {data} = await actions.importHosts({
+          cont: hostsFile
+        })
+        if (data.state === 1) {
+          this.data = data.data
+          this.addHostsFileModal = false
+          this.hostsFile = ''
+          this.updateFilter()
+        } else {
+          this.$message({
+            type: 'error',
+            message: data.msg
+          })
+        }
+      } catch (e) {
+        console.error(e)
+      }
+      console.log(this.hostsFile)
     }
   }
 }
 </script>
+
+<style>
+.el-table-filter__list-item {
+  color: #606266;
+}
+.el-table-filter {
+  max-height: 500px;
+  overflow: auto;
+}
+</style>
 
 <style scoped>
 .hostsWrap {

@@ -172,6 +172,74 @@ router.post('/editHost', async (ctx, next) => {
 })
 
 /**
+ * 导入hosts文件
+ */
+router.post('/importHosts', async (ctx, next) => {
+  try {
+    let {cont} = ctx.request.body
+    if (!cont) {
+      ctx.status = 400
+      ctx.body = {
+        state: 0,
+        msg: '请输入正确的信息'
+      }
+      return
+    }
+
+    let ipReg = /(2(5[0-5]{1}|[0-4]\d{1})|[0-1]?\d{1,2})(\.(2(5[0-5]{1}|[0-4]\d{1})|[0-1]?\d{1,2})){3}/
+
+    // 按行分割
+    let data = cont.split(/[\n\r]/g)
+
+    // 过滤掉空行
+    data = data.filter(item => {
+      return !!item && item.match(ipReg)
+    })
+
+    // 格式化每行为host对象
+    data = data.map(item => {
+      let ip = ''
+      let address = item.replace(ipReg, function (word) {
+        ip = word
+        return ''
+      }).replace(/[\s\#]/g, '')
+
+      return {
+        ip,
+        address,
+        active: false
+      }
+    })
+
+    // 过滤掉已添加的hosts
+    let hostsSymbolList = file.getHostsSymbolList()
+    data = data.filter(item => {
+      return !hostsSymbolList[`${item.address}${item.ip}`]
+    })
+
+    // 更新hosts文件
+    let hosts = file.getHosts()
+    let ts = Date.parse(new Date())
+    data.map((item, index) => {
+      hosts[md5(ts + index)] = {
+        address: item.address,
+        ip: item.ip,
+        active: item.active
+      }
+    })
+
+    file.updateHosts(hosts)
+
+    ctx.body = {
+      state: 1,
+      data: file.getAllHostsList()
+    }
+  } catch (e) {
+    common.postError(ctx, e, 500)
+  }
+})
+
+/**
  * 获取全部分组
  */
 // router.get('/getAllGroups', async (ctx, next) => {

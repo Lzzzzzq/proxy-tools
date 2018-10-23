@@ -39,7 +39,7 @@ export const deleteHost = (payload) => {
 }
 
 /**
- * 删除host
+ * 编辑host
  * @param {Object} payload 地址及ip
  */
 export const editHost = (payload) => {
@@ -47,5 +47,15 @@ export const editHost = (payload) => {
     id: payload.id,
     address: payload.address,
     ip: payload.ip
+  })
+}
+
+/**
+ * 编辑host
+ * @param {Object} payload 导入的hosts文件的内容
+ */
+export const importHosts = (payload) => {
+  return axios.post('//localhost:3000/api/importHosts', {
+    cont: payload.cont
   })
 }

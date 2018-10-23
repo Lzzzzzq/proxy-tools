@@ -33,7 +33,7 @@ process.on("uncaughtException", function(err) {
   console.error(err.stack);
 })
 
-opn('http://localhost:3000/view')
-  .catch(e => {
-    console.log(e)
-  })
+// opn('http://localhost:3000/view')
+//   .catch(e => {
+//     console.log(e)
+//   })
