@@ -6,14 +6,14 @@ const config = require('../config/main')
  */
 getHosts = () => {
   return getFileAsJson(config.HOSTS)
-},
+}
 
 /**
  * 获取所有分组
  */
 getAllGroups = () => {
   return getFileAsJson(config.GROUP)
-},
+}
 
 /**
  * 获取所有hosts的数组
@@ -31,21 +31,21 @@ getAllHostsList = () => {
     })
   }
   return hostsArr
-},
+}
 
 /**
  * 获取页面
  */
 getView = () => {
   return fs.readFileSync(`./view/dist/${config.VIEW}`)
-},
+}
 
 /**
  * 更新hosts
  */
 updateHosts = (cont) => {
   updateFileAsJson(config.HOSTS, cont)
-},
+}
 
 /**
  * 更新分组数据
@@ -65,8 +65,29 @@ updateFileAsJson = (path, cont) => {
  * 获取json文件
  */
 getFileAsJson = (path) => {
-  let fileCont = fs.readFileSync(`./data/${path}`)
-  return JSON.parse(fileCont.toString())
+  path = `./data/${path}`
+  let fileCont = {}
+  let exists = fs.existsSync(path)
+  if (exists) {
+    let file = fs.readFileSync(path)
+    fileCont = JSON.parse(file.toString())
+  } else {
+    createFile(path, '{}')
+  }
+  return fileCont
+}
+
+/**
+ * 创建文件并写入
+ */
+createFile = (filePath, fileData) => {
+  const wstream = fs.createWriteStream(filePath);
+  wstream.on('open', () => {
+    wstream.write(fileData)
+    wstream.end();
+  });
+  wstream.on('error', (err) => { reject(err); });
+  wstream.on('finish', () => { resolve(true); });
 }
 
 module.exports = {
