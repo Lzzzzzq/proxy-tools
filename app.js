@@ -18,11 +18,11 @@ const staticPath = './view/dist/'
 const app = new Koa()
 const view = new Koa()
 
+app.use(httpProxy())
 app.use(cors())
 app.use(logger())
 app.use(bodyParser())
 app.use(registerRouter())
-app.use(httpProxy())
 
 const server = http.createServer(app.callback()).listen(config.PORT, config.HOST)
 

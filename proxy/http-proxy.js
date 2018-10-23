@@ -21,8 +21,6 @@ const dev = () => {
         }
       }
 
-      console.log(host)
-
       if (ip) {
         host = ip
         ctx.respond = false
