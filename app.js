@@ -18,9 +18,9 @@ const staticPath = './view/dist/'
 const app = new Koa()
 const view = new Koa()
 
-app.use(httpProxy())
 app.use(cors())
 app.use(logger())
+app.use(httpProxy())
 app.use(bodyParser())
 app.use(registerRouter())
 
