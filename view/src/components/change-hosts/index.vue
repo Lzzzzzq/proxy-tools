@@ -1,6 +1,6 @@
 <template>
   <div class="hostsWrap" ref="contWrap">
-    <el-button type="primary" @click="addModal = true" size="small">新增host</el-button>
+    <el-button type="primary" @click="handleClickAdd" size="small">新增host</el-button>
     <div class="hostsDivider"></div>
     <el-table :data="data" style="width: 100%" border>
       <el-table-column prop="active" label="State" width="150">
@@ -38,21 +38,37 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog title="新增host" :visible.sync="addModal">
-      <el-input v-model="address" style="margin: 10px 0"></el-input>
-      <el-input v-model="ip" style="margin: 10px 0">></el-input>
+    <el-dialog title="新增host" :visible.sync="addModal" width="550px">
+      <el-autocomplete
+        class="inline-input"
+        v-model="address"
+        :fetch-suggestions="querySearchAddress"
+        placeholder="请输入地址"
+        style="margin: 10px 0; width: 100%"
+        clearable
+      ></el-autocomplete>
+      <el-autocomplete
+        class="inline-input"
+        v-model="ip"
+        :fetch-suggestions="querySearchIp"
+        placeholder="请输入ip"
+        style="margin: 10px 0; width: 100%"
+        clearable
+      ></el-autocomplete>
+      <!-- <el-input v-model="address" style="margin: 10px 0"></el-input>
+      <el-input v-model="ip" style="margin: 10px 0">></el-input> -->
       <div slot="footer" class="dialog-footer">
-        <el-button @click="addModal = false">取 消</el-button>
-        <el-button type="primary" @click="handleSubmitAdd">确 定</el-button>
+        <el-button @click="addModal = false" size="small">取 消</el-button>
+        <el-button type="primary" @click="handleSubmitAdd" size="small" :disabled="!address || !ip">确 定</el-button>
       </div>
     </el-dialog>
 
-    <el-dialog title="编辑host" :visible.sync="editModal">
+    <el-dialog title="编辑host" :visible.sync="editModal" width="550px">
       <el-input v-model="address" style="margin: 10px 0"></el-input>
       <el-input v-model="ip" style="margin: 10px 0">></el-input>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="editModal = false">取 消</el-button>
-        <el-button type="primary" @click="handleSubmitEdit">确 定</el-button>
+        <el-button @click="editModal = false" size="small">取 消</el-button>
+        <el-button type="primary" @click="handleSubmitEdit" size="small">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -137,6 +153,11 @@ export default {
             type: 'error',
             message: data.msg
           })
+        } else {
+          this.$message({
+            type: 'success',
+            message: item.active ? '已开启' : '已关闭'
+          })
         }
       } catch (e) {
         console.error(e)
@@ -217,6 +238,15 @@ export default {
     },
 
     /**
+     * 点击了新增
+     */
+    handleClickAdd: function () {
+      this.address = ''
+      this.ip = ''
+      this.addModal = true
+    },
+
+    /**
      * 确认编辑
      */
     handleSubmitEdit: async function () {
@@ -258,6 +288,30 @@ export default {
      */
     ipFilterHandler: function (value, row, column) {
       return row.ip === value
+    },
+
+    /**
+     * 地址输入建议
+     */
+    querySearchAddress: function (queryString, cb) {
+      let autoAddress = this.autoAddress
+      let results = queryString ? autoAddress.filter(this.createFilter(queryString)) : autoAddress
+      cb(results)
+    },
+
+    /**
+     * ip输入建议
+     */
+    querySearchIp: function (queryString, cb) {
+      let autoIp = this.autoIp
+      let results = queryString ? autoIp.filter(this.createFilter(queryString)) : autoIp
+      cb(results)
+    },
+
+    createFilter (queryString) {
+      return (res) => {
+        return (res.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0)
+      }
     }
   }
 }
