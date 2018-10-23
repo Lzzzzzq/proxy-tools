@@ -12,7 +12,7 @@ const dev = () => {
       let url = ctx.request.url
       let protocol = ctx.request.protocol
 
-      let hosts = file.getAllHosts()
+      let hosts = file.getHosts()
       
       let ip
       for (let item in hosts) {

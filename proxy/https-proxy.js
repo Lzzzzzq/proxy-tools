@@ -9,7 +9,7 @@ const dev = (req, cltSocket, head) => {
     let srvUrl = url.parse(`http://${req.url}`);
     let host = srvUrl.hostname
 
-    let hosts = file.getAllHosts()
+    let hosts = file.getHosts()
       
     let ip
     for (let item in hosts) {
