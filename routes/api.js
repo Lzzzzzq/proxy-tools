@@ -37,6 +37,7 @@ router.post('/addHost', async (ctx, next) => {
       }
       return
     }
+    address = address.replace(/http:\/\/|https:\/\//g, '')
     let hosts = file.getHosts()
     let added = false
 
