@@ -1,6 +1,6 @@
 .DS_Store
 node_modules/
-data/*.json
+hosts.json
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

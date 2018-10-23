@@ -86,8 +86,8 @@ createFile = (filePath, fileData) => {
     wstream.write(fileData)
     wstream.end();
   });
-  wstream.on('error', (err) => { reject(err); });
-  wstream.on('finish', () => { resolve(true); });
+  wstream.on('error', (err) => {});
+  wstream.on('finish', () => {});
 }
 
 module.exports = {
