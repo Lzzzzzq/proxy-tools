@@ -17,14 +17,14 @@ git clone https://github.com/Lzzzzzq/proxy-tools.git
 
 cd proxy-tools
 
-cnpm i
+npm i
 ```
 
 ### 使用
 
 ```shell
-node app.js
+npm start
 ```
 
-如找到了本机安装的 chrome 浏览器，则会自动打开对应的可视化界面，如未自动打开页面，请手动打开[http://localhost:3000/view#/](http://localhost:3000/view#/)
+如找到了本机安装的 chrome 浏览器，则会自动打开对应的可视化界面，如未自动打开页面，请手动打开[http://localhost:3001/#/](http://localhost:3001/#/)
 
