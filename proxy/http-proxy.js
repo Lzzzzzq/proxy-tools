@@ -28,7 +28,7 @@ const dev = () => {
             target: protocol + '://' + host
         })(ctx.req, ctx.res, next)
       }else if (host === `localhost:${config.PORT}` || host === `127.0.0.1:${config.PORT}`) {
-        next()
+        return next()
       } else {
         ctx.respond = false
         return proxy({
