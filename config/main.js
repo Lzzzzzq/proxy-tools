@@ -1,6 +1,6 @@
 module.exports = {
   HOST: 'localhost',
-  PORT: 6000,
+  PORT: 3000,
   HOSTS: 'hosts.json',
   HOSTS_INDEX: 'hosts_index.json',
   GROUP: 'group.json',

@@ -12,27 +12,45 @@ const cors = require('koa-cors')
 const opn = require('opn')
 const url = require("url")
 const fs = require("fs")
+const portfinder = require('portfinder')
+const convert = require('koa-convert')
 
 const staticPath = './view/dist/'
 
 const app = new Koa()
 const view = new Koa()
 
-app.use(cors())
+app.use(convert(cors()))
 app.use(logger())
 app.use(httpProxy())
 app.use(static(
-  path.join( __dirname,  staticPath)
+  path.join(__dirname, staticPath)
 ))
 app.use(bodyParser())
 app.use(registerRouter())
 
+portfinder.basePort = config.PORT;
+portfinder.getPort(function (err, port) {
+  if (err) { throw err; }
+  listen(port);
+});
 
 function listen (port) {
+  process.env.PORT = port
 
   const server = http.createServer(app.callback()).listen(port, config.HOST)
 
   server.on('connect', httpsProxy)
+
+  console.log('Starting up proxy-tools')
+  console.log('  Please set the proxy to: http://localhost:' + port)
+  console.log('  Visual interface will open automatically')
+  console.log('Hit CTRL-C to stop the server')
+
+  // opn('http://localhost:' + port + '/')
+  //   .catch(e => {
+  //     console.log(e)
+  //   })
 
 }
 
