@@ -2,6 +2,7 @@
   "name": "local-proxy-tools",
   "version": "1.0.0",
   "author": "lzzzzzq",
+  "email": "1441001905@qq.com",
   "main": "./app.js",
   "description": "基于 http/https 中间人代理，提供日常开发中需要使用到的一些工具集",
   "keywords": [
@@ -10,8 +11,11 @@
   ],
   "license": "MIT",
   "scripts": {
-    "start": "node ./app.js"
+    "start": "node ./bin/proxy-tools"
   },
+  "files": [
+    "bin"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/Lzzzzzq/proxy-tools.git"
@@ -35,7 +39,7 @@
   },
   "preferGlobal": true,
   "bin": {
-    "proxy-tools": "./app.js",
-    "pt": "./app.js"
+    "proxy-tools": "./bin/proxy-tools",
+    "pt": "./bin/proxy-tools"
   }
 }

@@ -71,14 +71,14 @@ updateGroup = (cont) => {
  * 更新文件
  */
 updateFileAsJson = (path, cont) => {
-  fs.writeFileSync(`./data/${path}`, JSON.stringify(cont, null, 2))
+  fs.writeFileSync(`./bin/data/${path}`, JSON.stringify(cont, null, 2))
 }
 
 /**
  * 获取json文件
  */
 getFileAsJson = (path) => {
-  path = `./data/${path}`
+  path = `./bin/data/${path}`
   let fileCont = {}
   let exists = fs.existsSync(path)
   if (exists) {
