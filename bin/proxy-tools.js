@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const http = require('http')
 const Koa = require('koa')
 const logger = require('koa-logger')

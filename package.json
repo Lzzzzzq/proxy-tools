@@ -1,9 +1,9 @@
 {
   "name": "local-proxy-tools",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "author": "lzzzzzq",
   "email": "1441001905@qq.com",
-  "main": "./app.js",
+  "main": "./bin/proxy-tools.js",
   "description": "基于 http/https 中间人代理，提供日常开发中需要使用到的一些工具集",
   "keywords": [
     "proxy",
@@ -39,7 +39,7 @@
   },
   "preferGlobal": true,
   "bin": {
-    "proxy-tools": "./bin/proxy-tools",
-    "pt": "./bin/proxy-tools"
+    "proxy-tools": "./bin/proxy-tools.js",
+    "pt": "./bin/proxy-tools.js"
   }
 }
