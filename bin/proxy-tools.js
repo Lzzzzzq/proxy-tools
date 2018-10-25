@@ -46,7 +46,8 @@ function listen (port) {
 
   console.log('Starting up proxy-tools')
   console.log('  Please set the proxy to: http://localhost:' + port)
-  console.log('  Visual interface will open automatically')
+  console.log('  GUI pages location: http://localhost:' + port)
+  // console.log('  Visual interface will open automatically')
   console.log('Hit CTRL-C to stop the server')
 
   // opn('http://localhost:' + port + '/')
