@@ -21,25 +21,22 @@ const view = new Koa()
 app.use(cors())
 app.use(logger())
 app.use(httpProxy())
+app.use(static(
+  path.join( __dirname,  staticPath)
+))
 app.use(bodyParser())
 app.use(registerRouter())
 
-const server = http.createServer(app.callback()).listen(config.PORT, config.HOST)
 
-server.on('connect', httpsProxy)
+function listen (port) {
+
+  const server = http.createServer(app.callback()).listen(port, config.HOST)
+
+  server.on('connect', httpsProxy)
+
+}
 
 process.on("uncaughtException", function (err) {
   console.error('An uncaught error occurred!');
   console.error(err.stack);
 })
-
-view.use(logger())
-view.use(static(
-  path.join( __dirname,  staticPath)
-))
-view.listen(3001)
-
-opn('http://localhost:3001/')
-  .catch(e => {
-    console.log(e)
-  })
