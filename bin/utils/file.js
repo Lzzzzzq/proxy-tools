@@ -1,4 +1,5 @@
 const fs = require('fs')
+const pathLib = require('path')
 const config = require('../config/main')
 
 /**
@@ -47,13 +48,6 @@ getAllHostsList = () => {
 }
 
 /**
- * 获取页面
- */
-getView = () => {
-  return fs.readFileSync(`./view/dist/${config.VIEW}`)
-}
-
-/**
  * 更新hosts
  */
 updateHosts = (cont) => {
@@ -71,14 +65,14 @@ updateGroup = (cont) => {
  * 更新文件
  */
 updateFileAsJson = (path, cont) => {
-  fs.writeFileSync(`./bin/data/${path}`, JSON.stringify(cont, null, 2))
+  fs.writeFileSync(`${pathLib.resolve(__dirname, '..')}/data/${path}`, JSON.stringify(cont, null, 2))
 }
 
 /**
  * 获取json文件
  */
 getFileAsJson = (path) => {
-  path = `./bin/data/${path}`
+  path = `${pathLib.resolve(__dirname, '..')}/data/${path}`
   let fileCont = {}
   let exists = fs.existsSync(path)
   if (exists) {
@@ -108,7 +102,6 @@ module.exports = {
   getHostsSymbolList,
   getAllHostsList,
   getAllGroups,
-  getView,
   updateHosts,
   updateGroup
 }
