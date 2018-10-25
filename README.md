@@ -2,6 +2,20 @@
 
 本插件通过中间人代理的方式实现线上资源代理的功能，并提供了可视化操作界面。
 
+### 安装
+
+```shell
+npm i -g local-proxy-tools
+```
+
+### 使用
+
+```javascript
+proxy-tools
+// or
+pt
+```
+
 ### 前置条件
 
 需本机装有代理工具，这里推荐 chrome 插件，[switchyomega](https://www.switchyomega.com/)
@@ -10,21 +24,4 @@
 
 ![](http://i.thsi.cn/webprivate/zttz/omega.jpg)
 
-### 安装
-
-```shell
-git clone https://github.com/Lzzzzzq/proxy-tools.git
-
-cd proxy-tools
-
-npm i
-```
-
-### 使用
-
-```shell
-npm start
-```
-
-如找到了本机安装的 chrome 浏览器，则会自动打开对应的可视化界面，如未自动打开页面，请手动打开[http://localhost:3001/#/](http://localhost:3001/#/)
-
+默认端口为 3000，如被占用，则会自动切换到其他端口开启服务，具体 switchyomega 中要配置的端口号请根据命令行中，服务给出的提示信息进行设置。
