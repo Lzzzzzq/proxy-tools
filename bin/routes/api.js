@@ -202,12 +202,20 @@ router.post('/importHosts', async (ctx, next) => {
       let address = item.replace(ipReg, function (word) {
         ip = word
         return ''
-      }).replace(/[\s\#]/g, '')
+      }).replace(/[\s]/g, '')
+
+      let active = false
+
+      if (address[0] === '#') [
+        active = true
+      ]
+
+      address = address.replace(/\#/g, '')
 
       return {
         ip,
         address,
-        active: false
+        active: active
       }
     })
 
