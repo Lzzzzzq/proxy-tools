@@ -37,6 +37,15 @@
           <el-button type="danger" @click="handleClickDelete(scope.row)" size="small">
             删除
           </el-button>
+          <el-button
+            class="copyBtn"
+            type="primary"
+            :data-clipboard-text="`${scope.row.ip} ${scope.row.address}`"
+            size="small"
+            @click="handleClickCopy"
+          >
+            复制到剪切板
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -91,11 +100,14 @@
 
 <script>
 import * as actions from '@/actions'
+import ClipboardJS from 'clipboard'
 
 export default {
   name: 'ChangeHosts',
   mounted: function () {
     this.getAllHosts()
+    // eslint-disable-next-line
+    new ClipboardJS('.copyBtn')
   },
   data () {
     return {
@@ -367,6 +379,16 @@ export default {
         console.error(e)
       }
       console.log(this.hostsFile)
+    },
+
+    /**
+     * 点击了复制到剪切板
+     */
+    handleClickCopy: function () {
+      this.$message({
+        type: 'success',
+        message: '已复制到剪切板'
+      })
     }
   }
 }
