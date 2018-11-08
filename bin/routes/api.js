@@ -206,7 +206,7 @@ router.post('/importHosts', async (ctx, next) => {
 
       let active = false
 
-      if (address[0] === '#') [
+      if (address[0] !== '#') [
         active = true
       ]
 
