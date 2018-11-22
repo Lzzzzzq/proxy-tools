@@ -17,7 +17,6 @@
         :filters="autoAddress"
         :filter-method="addressFilterHandler"
         filter-placement="bottom"
-        :filter-multiple="false"
       >
       </el-table-column>
       <el-table-column
@@ -26,7 +25,6 @@
         :filters="autoIp"
         :filter-method="ipFilterHandler"
         filter-placement="bottom"
-        :filter-multiple="false"
       >
       </el-table-column>
       <el-table-column label="Operation">
