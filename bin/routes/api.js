@@ -204,18 +204,18 @@ router.post('/importHosts', async (ctx, next) => {
         return ''
       }).replace(/[\s]/g, '')
 
-      let active = false
+      // let active = false
 
-      if (address[0] !== '#') [
-        active = true
-      ]
+      // if (address[0] !== '#') [
+      //   active = true
+      // ]
 
       address = address.replace(/\#/g, '')
 
       return {
         ip,
         address,
-        active: active
+        active: false
       }
     })
 
