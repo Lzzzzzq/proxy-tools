@@ -24,7 +24,8 @@ export const changeState = (payload) => {
 export const addHost = (payload) => {
   return axios.post('/api/addHost', {
     address: payload.address,
-    ip: payload.ip
+    ip: payload.ip,
+    tags: payload.tags
   })
 }
 
@@ -46,12 +47,13 @@ export const editHost = (payload) => {
   return axios.post('/api/editHost', {
     id: payload.id,
     address: payload.address,
-    ip: payload.ip
+    ip: payload.ip,
+    tags: payload.tags
   })
 }
 
 /**
- * 编辑host
+ * 导入hosts
  * @param {Object} payload 导入的hosts文件的内容
  */
 export const importHosts = (payload) => {

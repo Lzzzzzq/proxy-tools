@@ -5,7 +5,12 @@
       <el-button type="info" @click="handleClickAddHostsFile" size="small">导入本地hosts文件</el-button>
       <div class="hostsDivider"></div>
     </div>
-    <el-table :data="data" style="width: 100%" border stripe>
+    <el-table
+      :data="data"
+      style="width: 100%"
+      border
+      stripe
+    >
       <el-table-column prop="active" label="State" width="150">
         <template slot-scope="scope">
           <el-switch v-model="scope.row.active" @change="handleChangeState(scope.row)"></el-switch>
@@ -27,7 +32,26 @@
         filter-placement="bottom"
       >
       </el-table-column>
-      <el-table-column label="Operation">
+      <el-table-column
+        prop="tags"
+        label="Tag"
+        :filters="autoTag"
+        :filter-method="tagFilterHandler"
+        :filter-multiple="false"
+        filter-placement="bottom"
+      >
+        <template slot-scope="scope">
+          <el-tag
+            size="small"
+            v-for="(item, index) in scope.row.tags"
+            :key="index"
+            style="margin-right: 5px"
+          >
+            {{item}}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="Operation" width="268">
         <template slot-scope="scope">
           <el-button type="warning" @click="handleClickEdit(scope.row)" size="small">
             编辑
@@ -48,7 +72,7 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog title="新增host" :visible.sync="addModal" width="550px">
+    <el-dialog title="新增host" :visible.sync="addModal" width="550px" :closeOnClickModal="false">
       <el-autocomplete
         class="inline-input"
         v-model="address"
@@ -65,15 +89,45 @@
         style="margin: 10px 0; width: 100%"
         clearable
       ></el-autocomplete>
+      <el-select
+        v-model="tags"
+        multiple
+        filterable
+        allow-create
+        default-first-option
+        style="margin: 10px 0; width: 100%"
+        placeholder="请选择标签">
+        <el-option
+          v-for="item in autoTag"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
       <div slot="footer" class="dialog-footer">
         <el-button @click="addModal = false" size="small">取 消</el-button>
         <el-button type="primary" @click="handleSubmitAdd" size="small" :disabled="!address || !ip">确 定</el-button>
       </div>
     </el-dialog>
 
-    <el-dialog title="编辑host" :visible.sync="editModal" width="550px">
+    <el-dialog title="编辑host" :visible.sync="editModal" width="550px" :closeOnClickModal="false">
       <el-input v-model="address" style="margin: 10px 0" placeholder="请输入地址"></el-input>
       <el-input v-model="ip" style="margin: 10px 0" placeholder="请输入ip"></el-input>
+      <el-select
+        v-model="tags"
+        multiple
+        filterable
+        allow-create
+        default-first-option
+        style="margin: 10px 0; width: 100%"
+        placeholder="请选择标签">
+        <el-option
+          v-for="item in autoTag"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
       <div slot="footer" class="dialog-footer">
         <el-button @click="editModal = false" size="small">取 消</el-button>
         <el-button type="primary" @click="handleSubmitEdit" size="small">确 定</el-button>
@@ -117,10 +171,15 @@ export default {
       ip: '',
       hostsFile: '',
       id: '',
+      tags: [],
+
       addLoading: false,
       modal: false,
+
       autoAddress: [],
       autoIp: [],
+      autoTag: [],
+
       data: []
     }
   },
@@ -151,17 +210,25 @@ export default {
     updateFilter: function () {
       let addressList = []
       let ipList = []
+      let tagList = []
       this.data.map(item => {
         addressList.push(item.address)
         ipList.push(item.ip)
+        tagList = tagList.concat(item.tags)
       })
       addressList = [...new Set(addressList)]
       ipList = [...new Set(ipList)]
+      tagList = [...new Set(tagList)]
+      console.log(tagList)
       this.autoAddress = addressList.map(item => ({
         text: item,
         value: item
       }))
       this.autoIp = ipList.map(item => ({
+        text: item,
+        value: item
+      }))
+      this.autoTag = tagList.map(item => ({
         text: item,
         value: item
       }))
@@ -185,6 +252,8 @@ export default {
             type: item.active ? 'success' : 'warning',
             message: item.active ? '已开启' : '已关闭'
           })
+          this.data = data.data
+          this.updateFilter()
         }
       } catch (e) {
         console.error(e)
@@ -196,10 +265,11 @@ export default {
      */
     handleSubmitAdd: async function () {
       try {
-        let {address, ip} = this
+        let {address, ip, tags} = this
         let {data} = await actions.addHost({
           address,
-          ip
+          ip,
+          tags
         })
         if (data.state === 1) {
           this.$message({
@@ -260,6 +330,7 @@ export default {
     handleClickEdit: async function (item) {
       this.address = item.address
       this.ip = item.ip
+      this.tags = item.tags
       this.id = item.id
       this.editModal = true
     },
@@ -269,6 +340,7 @@ export default {
      */
     handleClickAdd: function () {
       this.address = ''
+      this.tags = []
       this.ip = ''
       this.addModal = true
     },
@@ -278,11 +350,12 @@ export default {
      */
     handleSubmitEdit: async function () {
       try {
-        let {address, ip, id} = this
+        let {address, ip, id, tags} = this
         let {data} = await actions.editHost({
           address,
           ip,
-          id
+          id,
+          tags
         })
         if (data.state === 1) {
           this.$message({
@@ -315,6 +388,21 @@ export default {
      */
     ipFilterHandler: function (value, row, column) {
       return row.ip === value
+    },
+
+    /**
+     * tag 筛选
+     */
+    tagFilterHandler: function (value, row, column) {
+      console.log(value)
+      return row.tags.indexOf(value) >= 0
+      // const property = column['property']
+      // return row[property] === value
+    },
+
+    tagFilterChange: function (key, value) {
+      console.log(key)
+      console.log(value)
     },
 
     /**

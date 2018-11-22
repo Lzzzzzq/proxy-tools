@@ -41,6 +41,7 @@ getAllHostsList = () => {
       address: hostItem.address,
       ip: hostItem.ip,
       active: hostItem.active,
+      tags: hostItem.tags || [],
       id: item
     })
   }

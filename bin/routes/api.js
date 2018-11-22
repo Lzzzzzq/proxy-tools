@@ -28,7 +28,7 @@ router.get('/getAllHosts', async (ctx, next) => {
  */
 router.post('/addHost', async (ctx, next) => {
   try {
-    let {address, ip} = ctx.request.body
+    let {address, ip, tags} = ctx.request.body
     if (!address || !ip) {
       ctx.status = 400
       ctx.body = {
@@ -59,6 +59,7 @@ router.post('/addHost', async (ctx, next) => {
       hosts[hostKey] = {
         address: address,
         ip: ip,
+        tags: tags,
         active: false
       }
 
@@ -121,8 +122,8 @@ router.post('/deleteHost', async (ctx, next) => {
  */
 router.post('/editHost', async (ctx, next) => {
   try {
-    let {id, address, ip} = ctx.request.body
-    if (!id || !address || !ip) {
+    let {id, address, ip, tags} = ctx.request.body
+    if (!id || !address || !ip || !tags) {
       ctx.status = 400
       ctx.body = {
         state: 0,
@@ -138,7 +139,7 @@ router.post('/editHost', async (ctx, next) => {
 
       for (let key in hosts) {
         let item = hosts[key]
-        if (item.address === address && item.ip === ip) {
+        if (item.address === address && item.ip === ip && JSON.stringify(item.tags || []) === JSON.stringify(tags)) {
           same = true
           break
         }
@@ -146,11 +147,12 @@ router.post('/editHost', async (ctx, next) => {
       if (same) {
         ctx.body = {
           state: 0,
-          msg: '已有相同host'
+          msg: '未做更改'
         }
       } else {
         hosts[id].address = address
         hosts[id].ip = ip
+        hosts[id].tags = tags
 
         file.updateHosts(hosts)
         ctx.body = {
@@ -437,11 +439,20 @@ router.post('/changeState', async (ctx, next) => {
     let hosts = file.getHosts()
 
     if (hosts[id]) {
-      hosts[id].active = !hosts[id].active
+
+      for (let item in hosts) {
+        if (item === id) {
+          hosts[item].active = !hosts[item].active
+        } else if (hosts[item].address === hosts[id].address) {
+          hosts[item].active = false
+        }
+      }
+
       file.updateHosts(hosts)
       ctx.body = {
         state: 1,
-        msg: '修改成功'
+        msg: '修改成功',
+        data: file.getAllHostsList()
       }
     } else {
       ctx.body = {
