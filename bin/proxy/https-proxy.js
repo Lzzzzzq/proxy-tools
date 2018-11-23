@@ -3,6 +3,7 @@ const net = require('net')
 const fs = require('fs')
 const config = require('../config/main')
 const file = require('../utils/file')
+const colors = require( "colors")
 
 const dev = (req, cltSocket, head) => {
   try {
@@ -19,6 +20,7 @@ const dev = (req, cltSocket, head) => {
     }
 
     if(ip) {
+      console.log(`Proxy: ${host} -> ${ip}`.green)
       host = ip
     }
 
@@ -31,7 +33,7 @@ const dev = (req, cltSocket, head) => {
       cltSocket.pipe(srvSocket);
     });
     srvSocket.on('error', (e) => {
-        console.error(e);
+        // console.error(e);
     });
   } catch (e) {
     console.error(e)

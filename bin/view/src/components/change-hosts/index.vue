@@ -2,7 +2,7 @@
   <div class="hostsWrap" ref="contWrap">
     <div ref="hostsTop" style="overflow: hidden">
       <el-button type="primary" @click="handleClickAdd" size="small">新增host</el-button>
-      <el-button type="info" @click="handleClickAddHostsFile" size="small">导入本地hosts文件</el-button>
+      <el-button type="info" @click="handleClickAddHostsFile" size="small">批量添加hosts</el-button>
       <div class="hostsDivider"></div>
     </div>
     <el-table
@@ -394,15 +394,7 @@ export default {
      * tag 筛选
      */
     tagFilterHandler: function (value, row, column) {
-      console.log(value)
       return row.tags.indexOf(value) >= 0
-      // const property = column['property']
-      // return row[property] === value
-    },
-
-    tagFilterChange: function (key, value) {
-      console.log(key)
-      console.log(value)
     },
 
     /**

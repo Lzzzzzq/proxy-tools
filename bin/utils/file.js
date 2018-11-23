@@ -23,13 +23,6 @@ getHostsSymbolList = () => {
 }
 
 /**
- * 获取所有分组
- */
-getAllGroups = () => {
-  return getFileAsJson(config.GROUP)
-}
-
-/**
  * 获取所有hosts的数组
  */
 getAllHostsList = () => {
@@ -56,24 +49,16 @@ updateHosts = (cont) => {
 }
 
 /**
- * 更新分组数据
- */
-updateGroup = (cont) => {
-  updateFileAsJson(config.GROUP, cont)
-}
-
-/**
  * 更新文件
  */
 updateFileAsJson = (path, cont) => {
-  fs.writeFileSync(`${pathLib.resolve(__dirname, '..')}/data/${path}`, JSON.stringify(cont, null, 2))
+  fs.writeFileSync(path, JSON.stringify(cont, null, 2))
 }
 
 /**
  * 获取json文件
  */
 getFileAsJson = (path) => {
-  path = `${pathLib.resolve(__dirname, '..')}/data/${path}`
   let fileCont = {}
   let exists = fs.existsSync(path)
   if (exists) {
@@ -102,7 +87,5 @@ module.exports = {
   getHosts,
   getHostsSymbolList,
   getAllHostsList,
-  getAllGroups,
-  updateHosts,
-  updateGroup
+  updateHosts
 }

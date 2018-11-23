@@ -1,8 +1,9 @@
+const os = require('os')
+const path = require('path')
+
 module.exports = {
   HOST: 'localhost',
   PORT: 3000,
-  HOSTS: 'hosts.json',
-  HOSTS_INDEX: 'hosts_index.json',
-  GROUP: 'group.json',
+  HOSTS: path.resolve(os.homedir(), 'ptHosts.json'),
   VIEW: 'index.html'
 }

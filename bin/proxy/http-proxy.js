@@ -3,6 +3,7 @@ const fs = require('fs')
 const config = require('../config/main')
 const md5 = require('md5')
 const file = require('../utils/file')
+const colors = require( "colors")
 
 const dev = () => {
 
@@ -22,6 +23,7 @@ const dev = () => {
       }
 
       if (ip) {
+        console.log(`Proxy: ${host} -> ${ip}`.green)
         host = ip
         ctx.respond = false
         return proxy({
